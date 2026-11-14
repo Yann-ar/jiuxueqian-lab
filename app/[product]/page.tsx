@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react'
+import Link from 'next/link'
+import { FeatureGallery } from '@/components/feature-gallery'
 import { SiteFooter, SiteHeader } from '@/components/site-chrome'
 import { productImage, products } from '@/lib/products'
 
@@ -37,59 +38,70 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const product = await getProduct(params)
+  const supportLabel = product.support.startsWith('mailto:') ? '邮件支持' : '获取支持'
 
   return (
     <>
-      <SiteHeader current={product.slug} />
+      <SiteHeader />
       <main id="main-content" className="shell product-page" data-product={product.slug} tabIndex={-1}>
-        <Link className="back-link" href="/"><ArrowLeft size={16} aria-hidden /> 全部 App</Link>
+        <Link className="breadcrumb" href="/#apps" prefetch={false}><ArrowLeft size={16} aria-hidden /> 全部应用</Link>
         <section className="product-hero" aria-labelledby="product-title">
           <div className="product-copy">
             <div className="product-identity">
-              <Image className="app-icon" src={productImage(`${product.slug}-icon`)} alt="" width={60} height={60} />
+              <Image className="app-icon" src={productImage(`${product.slug}-icon`)} alt="" width={54} height={54} />
               <div>
-                <h1 id="product-title">{product.name}</h1>
-                <p className="app-category">{product.category} <span aria-hidden> / </span> {product.platform}</p>
+                <h1 id="product-title" lang="en">{product.name}</h1>
+                <p>{product.category} · {product.platform}</p>
               </div>
             </div>
             <p className="product-tagline">{product.title}</p>
             <p className="product-description">{product.description}</p>
-            {product.store ? (
-              <a className="store-button" href={product.store}>在 App Store 下载 <ArrowUpRight size={17} aria-hidden /></a>
-            ) : (
-              <p className="release-note">App Store 下载暂未开放</p>
-            )}
+            <div className="product-actions">
+              {product.store ? (
+                <>
+                  <a className="button-link" href={product.store}>App Store 下载 <ArrowUpRight size={17} aria-hidden /></a>
+                  <a className="text-link" href={product.support}>{supportLabel} <ArrowUpRight size={15} aria-hidden /></a>
+                </>
+              ) : (
+                <a className="button-link" href={product.support}>{supportLabel} <ArrowUpRight size={17} aria-hidden /></a>
+              )}
+            </div>
+            {!product.store && <p className="release-note">App Store 下载暂未开放</p>}
           </div>
           <div className="product-art">
-            <Image src={productImage(`${product.slug}-cover`)} alt="" width={1600} height={686} preload />
+            {product.slug === 'vellum' ? (
+              <Image src={productImage('vellum-tablet')} alt="Vellum 在 iPad 上同时显示主题列表和笔记" width={780} height={1117} loading="eager" />
+            ) : (
+              <Image src={productImage(`${product.slug}-cover`)} alt="" width={1600} height={686} loading="eager" />
+            )}
           </div>
         </section>
 
-        <section className="product-features" aria-labelledby="feature-title">
-          <div className="section-line"><h2 id="feature-title">里面有什么</h2><span>{product.name}</span></div>
-          <div className="feature-grid">
-            {product.shots.map((shot) => (
-              <figure className="feature" key={shot.image}>
-                <div className="shot-frame">
-                  <Image src={productImage(shot.image)} alt={shot.alt} width={640} height={product.slug === 'tuotuo' ? 1385 : 1387} />
-                </div>
-                <figcaption>
-                  <h3>{shot.title}</h3>
-                  <p>{shot.description}</p>
-                </figcaption>
-              </figure>
-            ))}
+        <section id="features" className="product-features" aria-labelledby="feature-title">
+          <div className="feature-heading">
+            <p className="section-label">主要功能</p>
+            <h2 id="feature-title" className="section-title">{product.featureTitle}</h2>
           </div>
+          <FeatureGallery name={product.name} shots={product.shots} />
         </section>
 
-        <section className="product-resources" aria-labelledby="resource-title">
-          <h2 id="resource-title">支持与隐私</h2>
+        <section id="support" className="product-resources" aria-labelledby="resource-title">
+          <h2 id="resource-title" className="section-title">支持与隐私</h2>
           <ul>
-            <li><a href={product.support}>{product.support.startsWith('mailto:') ? '邮件支持' : '使用支持'} <ArrowUpRight size={15} aria-hidden /></a></li>
-            <li><a href={product.privacy}>隐私政策 <ArrowUpRight size={15} aria-hidden /></a></li>
-            {product.terms && <li><a href={product.terms}>使用条款 <ArrowUpRight size={15} aria-hidden /></a></li>}
+            <li><a className="text-link" href={product.support}>{supportLabel} <ArrowUpRight size={15} aria-hidden /></a></li>
+            <li><a className="text-link" href={product.privacy}>隐私政策 <ArrowUpRight size={15} aria-hidden /></a></li>
+            {product.terms && <li><a className="text-link" href={product.terms}>使用条款 <ArrowUpRight size={15} aria-hidden /></a></li>}
           </ul>
         </section>
+
+        <nav className="related-apps" aria-label="其他应用">
+          <span>其他应用</span>
+          {products.filter(({ slug }) => slug !== product.slug).map((entry) => (
+            <Link className="text-link" key={entry.slug} href={`/${entry.slug}`} prefetch={false}>
+              <span lang="en">{entry.name}</span> <ArrowRight size={15} aria-hidden />
+            </Link>
+          ))}
+        </nav>
       </main>
       <SiteFooter />
     </>

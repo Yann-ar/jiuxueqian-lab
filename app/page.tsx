@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { SiteFooter, SiteHeader } from '@/components/site-chrome'
 import { productImage, products } from '@/lib/products'
 
@@ -12,47 +12,57 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <SiteHeader />
-      <main id="main-content" tabIndex={-1} className="shell">
+      <SiteHeader home />
+      <main id="main-content" className="shell" tabIndex={-1}>
         <section className="home-intro" aria-labelledby="home-title">
-          <div>
-            <p className="eyebrow" lang="en">Jiuxueqian Lab</p>
-            <h1 id="home-title">给日常做一点<br />好用的小工具。</h1>
-          </div>
-          <p className="home-intro-note">想法随手记，英文慢慢练，喜欢的书摆上架。这是我为这三件小事做的 App。</p>
+          <h1 id="home-title">给日常做点好用的工具。</h1>
+          <p>Yann 做的独立 App，用来记笔记、练口语和整理藏书。</p>
         </section>
 
-        <section className="apps-section" aria-labelledby="apps-title">
-          <div className="section-line">
-            <h2 id="apps-title">我的 App</h2>
-            <ArrowDown size={16} aria-hidden />
-          </div>
+        <section id="apps" className="app-directory" aria-labelledby="apps-title">
+          <h2 id="apps-title" className="section-title">应用</h2>
           <div className="app-collection">
-            {products.map((product) => (
-              <article className="app-card" data-product={product.slug} key={product.slug}>
-                <Link className="app-card-link" href={`/${product.slug}`} aria-label={`了解 ${product.name}：${product.category}`}>
-                  <div className="card-art">
-                    <Image src={productImage(`${product.slug}-cover`)} alt="" width={1600} height={686} />
-                  </div>
-                  <div className="card-body">
-                    <div className="card-identity">
-                      <Image className="app-icon" src={productImage(`${product.slug}-icon`)} alt="" width={48} height={48} />
-                      <div>
-                        <p className="app-category">{product.category}</p>
-                        <h3>{product.name}</h3>
+            {products.map((product, index) => {
+              const shot = product.shots[0]
+
+              return (
+                <article className="app-card" data-product={product.slug} key={product.slug}>
+                  <Link
+                    className="app-card-link"
+                    href={`/${product.slug}`}
+                    aria-labelledby={`name-${product.slug} action-${product.slug}`}
+                    aria-describedby={`summary-${product.slug}`}
+                    prefetch={false}
+                  >
+                    <div className="card-copy">
+                      <div className="card-identity">
+                        <Image className="app-icon" src={productImage(`${product.slug}-icon`)} alt="" width={40} height={40} />
+                        <div>
+                          <h3 id={`name-${product.slug}`} lang="en">{product.name}</h3>
+                          <p className="card-category">{product.category}</p>
+                        </div>
                       </div>
-                      <ArrowUpRight className="card-arrow" size={20} aria-hidden />
+                      <p id={`summary-${product.slug}`} className="card-summary">{product.summary}</p>
+                      <span className="card-action" id={`action-${product.slug}`}>查看详情 <ArrowRight size={16} aria-hidden /></span>
                     </div>
-                    <p className="card-summary">{product.summary}</p>
-                  </div>
-                </Link>
-              </article>
-            ))}
+                    <div className="card-art" aria-hidden>
+                      <Image
+                        src={productImage(`${shot.image}-preview`)}
+                        alt=""
+                        width={384}
+                        height={shot.previewHeight ?? 832}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                      />
+                    </div>
+                  </Link>
+                </article>
+              )
+            })}
           </div>
         </section>
 
-        <section className="lab-note" aria-labelledby="lab-title">
-          <h2 id="lab-title">关于旧学前</h2>
+        <section id="about" className="lab-note" aria-labelledby="lab-title">
+          <h2 id="lab-title" className="section-title">关于旧学前</h2>
           <div className="lab-note-copy">
             <p>我是 Yann，业余写点代码。遇到现成的工具用不顺手，就试着自己做一个。</p>
             <p>我喜欢简单、干净的设计。这里会记下做产品的过程、踩过的坑，还有偶尔冒出来的想法。</p>
