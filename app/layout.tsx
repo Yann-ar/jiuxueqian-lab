@@ -1,27 +1,22 @@
 import { Analytics } from '@vercel/analytics/next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
-const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
-
 export const metadata: Metadata = {
-  title: 'Jiuxueqian Lab — AI products, made carefully',
-  description: 'The personal lab of Jiuxueqian, a manufacturing quality engineer building thoughtful AI products.',
-  generator: 'v0.app',
+  metadataBase: new URL('https://www.jiuxueqian.xin'),
+  title: { default: '旧学前 Lab', template: '%s｜旧学前 Lab' },
+  description: 'Yann 的独立 App：用 Vellum 记想法，用 TuoTuo 练口语，用 iLoveBook 整理藏书和阅读记录。',
 }
 
 export const viewport: Viewport = {
   colorScheme: 'light',
-  themeColor: '#ffffff',
-  userScalable: true,
+  themeColor: '#faf9f6',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="bg-background">
-      <body className={`${geist.variable} ${geistMono.variable} antialiased`}>
+    <html lang="zh-CN">
+      <body>
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
