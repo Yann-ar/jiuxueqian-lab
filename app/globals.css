@@ -163,7 +163,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--sans); }
   padding: clamp(30px, 5vw, 60px) 0 clamp(38px, 7vw, 84px); border-top: 1px solid var(--line);
 }
 .lab-note h2, .product-resources h2 { font-size: 15px; font-weight: 650; }
-.lab-note p { max-width: 38em; font-size: 16px; line-height: 1.9; color: var(--quiet); }
+.lab-note-copy { display: grid; gap: 1em; max-width: 38em; font-size: 16px; line-height: 1.9; color: var(--quiet); }
 .site-footer { border-top: 1px solid var(--line); color: var(--quiet); font-size: 13px; }
 .footer-inner { min-height: 78px; }
 .footer-inner a, .back-link, .store-button, .product-resources a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
